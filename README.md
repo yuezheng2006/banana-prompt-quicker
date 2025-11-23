@@ -41,6 +41,10 @@ WIP，上架中
 
 3. 访问 [Google AI Studio](https://aistudio.google.com/) 或 [Gemini](https://gemini.google.com/) 开始使用
 
+## TDOO
+
+- [ ] 添加更多提示词。按风格推荐穿搭，虚拟旅游，偶像合照...
+
 ## 🤝 贡献提示词
 
 直接开 Issue，形式不限，可以直接分享你的创意，或者自媒体案例链接...
