@@ -1,3 +1,19 @@
+const FLASH_MODE_PROMPT = {
+    title: "灵光模式",
+    preview: "https://cdn.jsdelivr.net/gh/glidea/banana-prompt-quicker@main/images/flash_mode.png",
+    prompt: `你现在进入【灵光模式: 有灵感就够了】。请按照以下步骤辅助我完成创作：
+1. 需求理解：分析我输入的粗略的想法描述（可能会包含图片）
+2. 需求澄清：要求我做出细节澄清，提出 3 个你认为最重要的选择题（A/B/C/D），以明确我的生图或修图需求（例如风格、构图、光影、具体相关细节等）。请一次性列出这三个问题
+3. 最终执行：等待我回答选择题后，根据我的原始描述和选择结果调用绘图工具生成图片（如果有附图，请务必作为参数传递给绘图工具，以保证一致性）
+
+---
+
+OK，我想要：`,
+    link: "https://www.xiaohongshu.com/user/profile/5f7dc54d0000000001004afb",
+    author: "Official@glidea",
+    isFlash: true
+}
+
 class BananaModal {
     constructor(adapter) {
         this.adapter = adapter
@@ -596,8 +612,11 @@ class BananaModal {
         }
         // recommend 模式下保持原顺序
 
-        // 合并：收藏 > 自定义 > 普通
+        // 合并：Flash Mode > 收藏 > 自定义 > 普通
         filtered = [...favoriteItems, ...customItems, ...normalItems]
+
+        // Always prepend Flash Mode
+        filtered.unshift(FLASH_MODE_PROMPT)
 
         this.filteredPrompts = filtered
 
@@ -918,15 +937,28 @@ class BananaModal {
         }
 
         const modeTag = document.createElement('span')
-        const isEdit = prompt.mode === 'edit'
-        const tagBg = theme === 'dark'
-            ? (isEdit ? 'rgba(10, 132, 255, 0.15)' : 'rgba(48, 209, 88, 0.15)')
-            : (isEdit ? 'rgba(0, 122, 255, 0.12)' : 'rgba(52, 199, 89, 0.12)')
-        const tagColor = theme === 'dark'
-            ? (isEdit ? '#0a84ff' : '#30d158')
-            : (isEdit ? '#007aff' : '#34c759')
+        let tagText = '生图'
+        let tagBg = ''
+        let tagColor = ''
+
+        if (prompt.isFlash) {
+            tagText = '万能'
+            // Special Flash Mode styling (e.g., purple/gradient)
+            tagBg = theme === 'dark' ? 'rgba(168, 85, 247, 0.15)' : 'rgba(147, 51, 234, 0.12)'
+            tagColor = theme === 'dark' ? '#a855f7' : '#9333ea'
+        } else {
+            const isEdit = prompt.mode === 'edit'
+            tagText = isEdit ? '编辑' : '生图'
+            tagBg = theme === 'dark'
+                ? (isEdit ? 'rgba(10, 132, 255, 0.15)' : 'rgba(48, 209, 88, 0.15)')
+                : (isEdit ? 'rgba(0, 122, 255, 0.12)' : 'rgba(52, 199, 89, 0.12)')
+            tagColor = theme === 'dark'
+                ? (isEdit ? '#0a84ff' : '#30d158')
+                : (isEdit ? '#007aff' : '#34c759')
+        }
+
         modeTag.style.cssText = `background: ${tagBg}; color: ${tagColor}; padding: 4px 10px; border-radius: 12px; font-size: ${mobile ? '12px' : '11px'}; font-weight: 600; backdrop-filter: blur(10px); flex-shrink: 0;`
-        modeTag.textContent = isEdit ? '编辑' : '生图'
+        modeTag.textContent = tagText
 
         bottomRow.appendChild(author)
         bottomRow.appendChild(modeTag)
