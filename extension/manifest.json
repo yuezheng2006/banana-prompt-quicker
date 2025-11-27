@@ -24,6 +24,7 @@
                 "<all_urls>"
             ],
             "js": [
+                "config.js",
                 "prompts.js",
                 "modal.js",
                 "content.js"
